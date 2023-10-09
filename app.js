@@ -1,49 +1,108 @@
-// Too many promises in life
+// Async Await
 
+//promise mess
+// console.log('person1 : shows ticket');
+// console.log('person2 : shows ticket');
 
-// const posts = [
-//     { title: 'Post One', body: 'This is post one' },
-//     { title: 'Post Two', body: 'This is post two' }
-// ];
-// function getPosts() {
+// const promiseWifeBring = new Promise((resolve, reject) => {
 //     setTimeout(() => {
-//         let output = ''; posts.forEach((post, index) => {
-//             output += `<li>${post.title}</li>`;
-//         });
-//         document.body.innerHTML = output;
-//     }, 1000);
+//         resolve('ticket');
+//     }, 3000);
+// })
+
+// const getPopcorn = promiseWifeBring.then((t) => {
+//     console.log('husband : we should go in');
+//     console.log('wife : no i am hungry');
+
+//     return new Promise((resolve, reject) => {
+//         resolve(`${t} : popcorn`);
+//     })
+// });
+
+// const getButter = getPopcorn.then((t) => {
+//     console.log('husband: i got some popcorn');
+//     console.log('husband: we should go in');
+//     console.log('wife: I need butter on my popcorn');
+
+//     return new Promise((resolve, reject) => resolve(`${t} butter`))
+// });
+// getButter.then((t) => console.log(t));
+// // getPopcorn.then((t) => console.log(t));
+
+// console.log('person4 : shows ticket');
+// console.log('person5 : shows ticket');
+
+
+//Async Await 
+// console.log('person1 : shows ticket');
+// console.log('person2 : shows ticket');
+
+// const preMovie = async () => {
+
+//all the promises are reolved
+// const promiseWifeBring = new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//         resolve('ticket');
+//     }, 3000);
+// })
+
+// const getPopcorn = new Promise((resolve, reject) => resolve(`popcorn`));
+
+// const getButter = new Promise((resolve, reject) => resolve(`butter`));
+
+// const getColdDrinks = new Promise((resolve, reject) => resolve(`cold-drinks`));
+
+// const getCoke = new Promise((resolve, reject) => resolve(`candy`));
+
+// const getCandy = new Promise((resolve, reject) => resolve(`coke`));
+
+//this will resolve promises one after another
+// let ticket = await promiseWifeBring;
+// let popcorn = await getPopcorn;
+// let butter = await getButter;
+// let coldDrink = await getColdDrinks;
+// let coke = await getCoke;
+// let candy = await getCandy;
+
+//toresolve promises parallelly use promise all
+// let [ticket, popcorn, butter, coldDrink, coke, candy] = await Promise.all([promiseWifeBring, getPopcorn, getButter, getColdDrinks, getCoke, getCandy])
+// console.log(`${ticket},${popcorn},${butter},${coldDrink},${coke},${candy}`);
+
+//reject promises 
+//     const getPopcorn = new Promise((resolve, reject) => reject(`popcorn`));
+//     let ticket;
+//     try {
+//         ticket = await getPopcorn;
+//     } catch (e) {
+//         ticket = 'sad face';
+//     }
+
+//     return ticket;
 // }
 
-// function createPost(post) {
-//     return new Promise((resolve, reject) => {
-//         setTimeout(() => {
-//             posts.push(post);
+// preMovie().then((m) => console.log(`person3: shows ${m}`));
 
-//             const error = false;
+// console.log('person4 : shows ticket');
+// console.log('person5 : shows ticket');
 
-//             if (!error) {
-//                 resolve();
-//             } else {
-//                 reject('Error: something went wrong');
-//             }
-//         }, 2000);//timer
+// const testUserForm = async () => {
+//     const loadUserForm = new Promise((resolve, reject) => {
+//         setTimeout(() => resolve('page loaded'), 3000);
+//     });
+//     const enterUserName = new Promise((resolve, reject) => {
+//         setTimeout(() => resolve('user entered'), 3000);
+//     });
+//     const verifyUserDetails = () => {
+//     }
+//     await loadUserForm;
+//     await enterUserName;
+//     const testResult = verifyUserDetails();
 
-//     });//promise3
-// };
-// createPost({ title: 'Post three', body: 'This is post three' }).then(getPosts).catch(err => console.log(err))
+//     return testResult;
+// }
+// testUserForm().then((m) => console.log(`Result: ${m}`));
 
-//promise all
-// const promise1 = Promise.resolve('hello world');
-// const promise2 = 1;
-// const promise3 = new Promise((resolve, reject) => {
-//     setTimeout(resolve, 2000, 'this is timer');
-// })
 
-// const promise4 = fetch('https://my-json-server.typicode.com/typicode/demo/posts').then(res => res.json());
-
-// Promise.all([promise1, promise2, promise3, promise4]).then((values) => {
-//     console.log(values);
-// })
 
 const posts = [
     { title: 'Post One', body: 'This is post one' },
@@ -51,70 +110,49 @@ const posts = [
 ];
 var userTimings = '';
 
-function getPosts() {
-    setTimeout(() => {
-        let output = ''; posts.forEach((post, index) => {
-            output += `<li>${post.title}</li>`;
-        });
-        document.body.innerHTML = output;
-    }, 1000);
-}
 function printPosts() {
     posts.forEach((post) => {
         console.log(post);
     })
 }
-function deletePost(post) {
-    return new Promise((resolve, reject) => {
+
+async function getEveryThingAsynch() {
+    const updateTheDetails = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            userTimings = new Date();
+            resolve(userTimings);
+        }, 1000);
+    })
+    let update = await updateTheDetails;
+    console.log(update);
+
+    const deletePost = new Promise((resolve, reject) => {
         setTimeout(() => {
             if (posts.length > 0) {
                 const deletedPost = posts.pop();
-                resolve(deletedPost);
+                resolve(deletedPost.title);
             } else
                 reject('posts is empty');
         }, 2000);//timer
-
     });//promise3
-};
+    let del = await deletePost;
+    console.log(del);
 
-function createPost(post) {
-    return new Promise((resolve, reject) => {
+    const createNewPost = new Promise((resolve, reject) => {
+
         setTimeout(() => {
-            posts.push(post);
-
+            posts.push({ title: 'Post three', body: 'This is post third' });
             const error = false;
-
             if (!error) {
                 resolve();
             } else {
                 reject('Error: something went wrong');
             }
         }, 2000);//timer
-
     });//promise3
-};
-function updateLastUserActivityTime() {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            userTimings = new Date();
-            resolve(userTimings);
-        }, 1000);
-    })
+    let create = await createNewPost;
+    console.log(create);
+    printPosts();
 }
-createPost({ title: 'Post three', body: 'This is post three' }).then(() => {
-    updateLastUserActivityTime().then((userTimings) => {
-        console.log(userTimings);
-        printPosts();
 
-        deletePost().then((deletedposts) => {
-            console.log(deletedposts);
-
-        }).catch(err => console.log(err))
-    })
-
-}).catch(err => console.log(err))
-
-
-// Why on Earth do we need promise.all ?
-// in normal promise execution , promises get called one after another so the execution time gets added.
-// in promise.all all the promises run parallelly and total execution time is reduced by more than half.
+getEveryThingAsynch();
