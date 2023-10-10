@@ -1,216 +1,118 @@
-// Why do we need headers any idea?
-// header are needed when we have to send common or default data parameters through the request
+//Saving the user Details on Crud Crud
 
-// What is axios?
-// a function which connects BE to FE
-// a function which sends the request with data to any server address  and gets the data which returns promise
+const myForm = document.querySelector('#my-form');
+const nameInput = document.getElementById('name');
+const emailInput = document.querySelector('#email');
+const msg = document.querySelector('.msg');
+const userList = document.querySelector('#users');
+const itemList = document.getElementById('items');
+myForm.addEventListener('submit', onSubmit);
 
-// What are the common problems faced when you make network calls and what should you do to solve it.
-// wrong url was the major problems
+function showNewUserOnScreen(res) {
+    console.log('res = ' + res);
+    console.log('res.data = ' + res.name);
+    console.log('res.email = ' + res.email);
 
-
-//website  = https://jwt.io/
-//global tokens
-axios.defaults.headers.common['X-Auth-Token'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
-
-
-// GET REQUEST
-function getTodos() {
-  // axios({
-  //   method: 'get',
-  //   url: 'https://jsonplaceholder.typicode.com/todos',
-  //   params: {
-  //     _limit: 5,
-  //   }
-  // })
-  //   .then(respose => showOutput(respose))
-  //   .catch(err => console.log(err));
-
-  axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5', { timeout: 5000 })
-    .then(respose => showOutput(respose))
-    .catch(err => console.log(err));
 }
+function onSubmit(e) {
+    e.preventDefault();
 
-// POST REQUEST
-function addTodo() {
-  axios.post('https://jsonplaceholder.typicode.com/todos', {
-    title: 'New todo',
-    completed: false,
-  })
-    .then(respose => showOutput(respose))
-    .catch(err => console.log(err));
-}
+    if (nameInput.value === '' || emailInput.value === '') {
+        msg.classList.add('error');
+        msg.innerHTML = 'Please enter all fields';
+        setTimeout(() => msg.remove(), 3000);
+    } else {
+        
+        const li = document.createElement('li');
+        li.appendChild(document.createTextNode(`${nameInput.value}: ${emailInput.value}`));
+        userList.appendChild(li);
 
-// PUT/PATCH REQUEST
-function updateTodo() {
-  //put will update the all records of id = 1 with the new data sent by the user
-  // axios.put('https://jsonplaceholder.typicode.com/todos/1', {
-  //   title: 'Updated todo',
-  //   completed: true,
-  // })
-  //   .then(respose => showOutput(respose))
-  //   .catch(err => console.log(err));
+        //for adding delete button functionality 
+        const delBtn = document.createElement('input');
+        delBtn.setAttribute('type', 'button');
+        delBtn.setAttribute('value', 'Delete');
+        //setting id as an email of user so we can pass the value
+        delBtn.id = emailInput.value;
+        delBtn.setAttribute('onclick', 'deleteUser(this)');
+        li.appendChild(delBtn);
+        delBtn.style.margin = '10px';
+        delBtn.style.marginLeft = '10px';
+        delBtn.style.padding = '5px';
+        delBtn.style.fontSize = '15px';
+        delBtn.style.backgroundColor = '#333';
+        delBtn.style.color = 'white';
+        // console.log(li.textContent);
 
-  //patch will only update the records of id = 1 with the new data sent by the user
-  axios.patch('https://jsonplaceholder.typicode.com/todos/1', {
-    title: 'Updated todo',
-    completed: true,
-  })
-    .then(respose => showOutput(respose))
-    .catch(err => console.log(err));
-}
+        //for adding edit button functionality 
+        const editBtn = document.createElement('input');
+        editBtn.setAttribute('type', 'button');
+        editBtn.setAttribute('value', 'Edit');
+        editBtn.id = emailInput.value;
+        editBtn.setAttribute('onclick', 'editUser(this)');
+        li.appendChild(editBtn);
+        editBtn.style.margin = '10px';
+        editBtn.style.marginLeft = '10px';
+        editBtn.style.padding = '5px';
+        editBtn.style.fontSize = '15px';
+        editBtn.style.backgroundColor = '#333';
+        editBtn.style.color = 'white';
 
-// DELETE REQUEST
-function removeTodo() {
-  axios.delete('https://jsonplaceholder.typicode.com/todos/1')
-    .then(respose => showOutput(respose))
-    .catch(err => console.log(err));
-}
+        msg.classList.add('success');
+        msg.innerHTML = 'Successfully loged in';
+        setTimeout(() => msg.remove(), 2000);
 
-// SIMULTANEOUS DATA
-function getData() {
-  axios.all([
-    axios.get('https://jsonplaceholder.typicode.com/todos?_limit=5'),
-    axios.get('https://jsonplaceholder.typicode.com/posts?_limit=5'),
-  ])
-    .then(axios.spread((todos, posts) => showOutput(posts)))
-    .catch(err => console.log(err));
-}
+        let obj = {
+            name: nameInput.value,
+            email: emailInput.value
+        };
 
-// CUSTOM HEADERS
-function customHeaders() {
-  const config = {
-    header: {
-      'Content-Type': 'application/json',
-      Authorization: 'sometozken',
+        //store the data on the server
+        axios.post('https://crudcrud.com/api/90f4d9b275aa4c23b7b7377a5da5c8d1/appointmentData', obj)
+            .then(res => {
+                console.log(res);
+                showNewUserOnScreen(res.data);
+            }).catch(err => console.log(err + ' error'));
+
+        nameInput.value = '';
+        emailInput.value = '';
     }
-  }
-  axios.post('https://jsonplaceholder.typicode.com/todos', {
-    title: 'New todo',
-    completed: false,
-  }, config)
-    .then(respose => showOutput(respose))
-    .catch(err => console.log(err));
+
+}//onSubmit
+
+function editUser(val) {
+    //remove user details from local storage and edit the user details
+    //to featch name and email 
+    let stringJSON = localStorage.getItem(val.id);
+    let obj = JSON.parse(stringJSON);
+    // console.log('obj = ' + JSON.stringify(obj));
+    let userEmail = obj.email;
+    let userName = obj.name;
+    console.log('userName = ' + userName);
+    console.log('userEmail = ' + userEmail);
+
+    //this will only remove the user from local and the list
+    localStorage.removeItem(val.id);
+    let parentEle = document.getElementById(val.id).parentElement;
+    userList.removeChild(parentEle);
+
+    //to edit the user details
+    nameInput.value = userName;
+    emailInput.value = userEmail;
 }
 
-// TRANSFORMING REQUESTS & RESPONSES
-function transformResponse() {
-  const options = {
-    method: 'post',
-    url: 'https://jsonplaceholder.typicode.com/todos',
-    data: {
-      title: 'Hello World'
-    },
-    transformResponse: axios.defaults.transformResponse.concat(data => {
-      data.title = data.title.toUpperCase();
-      return data;
-    })
-  };
-  axios(options).then(res => showOutput(res));
-}
+function deleteUser(val) {
+    //get a parent node element and delete the user details from the list
 
-// ERROR HANDLING
-function errorHandling() {
-  axios.get('https://jsonplaceholder.typicode.com/todoss', {
-    validateStatus: function (status) {
-      return status < 500; //reject only if status code is greater than 500
+    if (confirm('Are You Sure?')) {
+        // console.log('val = ', val);
+        localStorage.removeItem(val.id);
+        let parentEle = document.getElementById(val.id).parentElement;
+        userList.removeChild(parentEle);
     }
-  })
-    .then(respose => showOutput(respose))
-    .catch(err => {
-      console.log(err.response.data);
-      console.log(err.response.status);
-      console.log(err.response.headers);
-      if (err.response.status === 404) {
-        alert('Error: page not found');
-      }
-    });
 }
 
-// CANCEL TOKEN
-function cancelToken() {
-  const source = axios.CancelToken.source();
-  axios
-    .get('https://jsonplaceholder.typicode.com/todos', {
-      cancelToken: source.token
-    })
-    .then(res => showOutput(res))
-    .catch(thrown => {
-      if (axios.isCancel(thrown)) {
-        console.log('Request canceled', thrown.message);
-      }
-    });
-  if (true) {
-    source.cancel('Request canceled!');
-  }
-}
-// INTERCEPTING REQUESTS & RESPONSES
-//this will intercept the request and fetch the data
-axios.interceptors.request.use(
-  config => {
-    console.log(
-      `${config.method.toUpperCase()} request sent to ${config.url} at ${new Date().getTime()}`
-    );
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  }
-);
 
-// AXIOS INSTANCES
-const axiosIntance = axios.create({
-  baseURL: 'https://jsonplaceholder.typicode.com',
-})
 
-axiosIntance.get('/comments').then(res => showOutput(res));
 
-// Show output in browser
-function showOutput(res) {
-  document.getElementById('res').innerHTML = `
-  <div class="card card-body mb-4">
-    <h5>Status: ${res.status}</h5>
-  </div>
 
-  <div class="card mt-3">
-    <div class="card-header">
-      Headers
-    </div>
-    <div class="card-body">
-      <pre>${JSON.stringify(res.headers, null, 2)}</pre>
-    </div>
-  </div>
-
-  <div class="card mt-3">
-    <div class="card-header">
-      Data
-    </div>
-    <div class="card-body">
-      <pre>${JSON.stringify(res.data, null, 2)}</pre>
-    </div>
-  </div>
-
-  <div class="card mt-3">
-    <div class="card-header">
-      Config
-    </div>
-    <div class="card-body">
-      <pre>${JSON.stringify(res.config, null, 2)}</pre>
-    </div>
-  </div>
-`;
-}
-
-// Event listeners
-document.getElementById('get').addEventListener('click', getTodos);
-document.getElementById('post').addEventListener('click', addTodo);
-document.getElementById('update').addEventListener('click', updateTodo);
-document.getElementById('delete').addEventListener('click', removeTodo);
-document.getElementById('sim').addEventListener('click', getData);
-document.getElementById('headers').addEventListener('click', customHeaders);
-document
-  .getElementById('transform')
-  .addEventListener('click', transformResponse);
-document.getElementById('error').addEventListener('click', errorHandling);
-document.getElementById('cancel').addEventListener('click', cancelToken);
 
