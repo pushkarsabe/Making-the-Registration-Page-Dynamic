@@ -1,10 +1,5 @@
-// Why do we even want DOMContentLoaded
-// because when we want to perform some dom manipulation then the html Elements has to be loaded hence 
-// we need DOMContentLoaded
-
-
-
 //Saving the user Details on Crud Crud
+//Deleting the Appointments = 
 
 const myForm = document.querySelector('#my-form');
 const nameInput = document.getElementById('name');
@@ -17,6 +12,7 @@ myForm.addEventListener('submit', onSubmit);
 function showNewUserOnScreen(res) {
     console.log('res.name = ' + res.name);
     console.log('res.email = ' + res.email);
+    console.log('id = ' + res._id);
 
     const li = document.createElement('li');
     li.appendChild(document.createTextNode(`${res.name}: ${res.email}`));
@@ -27,7 +23,7 @@ function showNewUserOnScreen(res) {
     delBtn.setAttribute('type', 'button');
     delBtn.setAttribute('value', 'Delete');
     //setting id as an email of user so we can pass the value
-    delBtn.id = res.email;
+    delBtn.id = res._id;
     delBtn.setAttribute('onclick', 'deleteUser(this)');
     li.appendChild(delBtn);
     delBtn.style.margin = '10px';
@@ -41,7 +37,7 @@ function showNewUserOnScreen(res) {
     const editBtn = document.createElement('input');
     editBtn.setAttribute('type', 'button');
     editBtn.setAttribute('value', 'Edit');
-    editBtn.id = res.email;
+    editBtn.id = res._id;
     editBtn.setAttribute('onclick', 'editUser(this)');
     li.appendChild(editBtn);
     editBtn.style.margin = '10px';
@@ -50,11 +46,10 @@ function showNewUserOnScreen(res) {
     editBtn.style.fontSize = '15px';
     editBtn.style.backgroundColor = '#333';
     editBtn.style.color = 'white';
-
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    axios.get('https://crudcrud.com/api/418f9a4f2374485d941d0149c01475e6/appointmentData')
+    axios.get('https://crudcrud.com/api/6299d244e60e45ad86d8d0205052f50f/appointmentData')
         .then(res => {
             //this will print array collection with data output of get request
             // console.log(res);
@@ -78,39 +73,6 @@ function onSubmit(e) {
         setTimeout(() => msg.remove(), 3000);
     } else {
 
-        const li = document.createElement('li');
-        li.appendChild(document.createTextNode(`${nameInput.value}: ${emailInput.value}`));
-        userList.appendChild(li);
-
-        //for adding delete button functionality 
-        const delBtn = document.createElement('input');
-        delBtn.setAttribute('type', 'button');
-        delBtn.setAttribute('value', 'Delete');
-        //setting id as an email of user so we can pass the value
-        delBtn.id = emailInput.value;
-        delBtn.setAttribute('onclick', 'deleteUser(this)');
-        li.appendChild(delBtn);
-        delBtn.style.margin = '10px';
-        delBtn.style.marginLeft = '10px';
-        delBtn.style.padding = '5px';
-        delBtn.style.fontSize = '15px';
-        delBtn.style.backgroundColor = '#333';
-        delBtn.style.color = 'white';
-
-        //for adding edit button functionality 
-        const editBtn = document.createElement('input');
-        editBtn.setAttribute('type', 'button');
-        editBtn.setAttribute('value', 'Edit');
-        editBtn.id = emailInput.value;
-        editBtn.setAttribute('onclick', 'editUser(this)');
-        li.appendChild(editBtn);
-        editBtn.style.margin = '10px';
-        editBtn.style.marginLeft = '10px';
-        editBtn.style.padding = '5px';
-        editBtn.style.fontSize = '15px';
-        editBtn.style.backgroundColor = '#333';
-        editBtn.style.color = 'white';
-
         msg.classList.add('success');
         msg.innerHTML = 'Successfully loged in';
         setTimeout(() => msg.remove(), 2000);
@@ -121,9 +83,43 @@ function onSubmit(e) {
         };
 
         //store the data on the server
-        axios.post('https://crudcrud.com/api/418f9a4f2374485d941d0149c01475e6/appointmentData', obj)
+        axios.post('https://crudcrud.com/api/6299d244e60e45ad86d8d0205052f50f/appointmentData', obj)
             .then(res => {
                 console.log(res);
+                //to set the data of list with required details
+                const li = document.createElement('li');
+                li.appendChild(document.createTextNode(`${res.data.name}: ${res.data.email}`));
+                userList.appendChild(li);
+
+                //for adding delete button functionality 
+                const delBtn = document.createElement('input');
+                delBtn.setAttribute('type', 'button');
+                delBtn.setAttribute('value', 'Delete');
+                //setting id as an email of user so we can pass the value
+                delBtn.id = res.data._id;
+                delBtn.setAttribute('onclick', 'deleteUser(this)');
+                li.appendChild(delBtn);
+                delBtn.style.margin = '10px';
+                delBtn.style.marginLeft = '10px';
+                delBtn.style.padding = '5px';
+                delBtn.style.fontSize = '15px';
+                delBtn.style.backgroundColor = '#333';
+                delBtn.style.color = 'white';
+
+                //for adding edit button functionality 
+                const editBtn = document.createElement('input');
+                editBtn.setAttribute('type', 'button');
+                editBtn.setAttribute('value', 'Edit');
+                editBtn.id = res.data._id;
+                editBtn.setAttribute('onclick', 'editUser(this)');
+                li.appendChild(editBtn);
+                editBtn.style.margin = '10px';
+                editBtn.style.marginLeft = '10px';
+                editBtn.style.padding = '5px';
+                editBtn.style.fontSize = '15px';
+                editBtn.style.backgroundColor = '#333';
+                editBtn.style.color = 'white';
+
             }).catch(err => console.log(err + ' error'));
 
         nameInput.value = '';
@@ -133,8 +129,7 @@ function onSubmit(e) {
 }//onSubmit
 
 function editUser(val) {
-    //remove user details from local storage and edit the user details
-    //to featch name and email 
+    //remove user details and to fetch name and email from BE server
     let stringJSON = localStorage.getItem(val.id);
     let obj = JSON.parse(stringJSON);
     // console.log('obj = ' + JSON.stringify(obj));
@@ -154,11 +149,16 @@ function editUser(val) {
 }
 
 function deleteUser(val) {
-    //get a parent node element and delete the user details from the list
 
     if (confirm('Are You Sure?')) {
-        // console.log('val = ', val);
-        localStorage.removeItem(val.id);
+        //this will delete the record from BE server    
+        // console.log('val = ' + val.id);
+        axios.delete('https://crudcrud.com/api/6299d244e60e45ad86d8d0205052f50f/appointmentData/' + val.id)
+            .then(res => {
+                console.log(res);
+            }).catch(err => console.log(err + ' error'));
+
+        //get a parent node element and delete the user details from the list
         let parentEle = document.getElementById(val.id).parentElement;
         userList.removeChild(parentEle);
     }
