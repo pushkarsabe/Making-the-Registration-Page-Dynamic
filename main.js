@@ -1,3 +1,9 @@
+// Why do we even want DOMContentLoaded
+// because when we want to perform some dom manipulation then the html Elements has to be loaded hence 
+// we need DOMContentLoaded
+
+
+
 //Saving the user Details on Crud Crud
 
 const myForm = document.querySelector('#my-form');
@@ -9,11 +15,60 @@ const itemList = document.getElementById('items');
 myForm.addEventListener('submit', onSubmit);
 
 function showNewUserOnScreen(res) {
-    console.log('res = ' + res);
-    console.log('res.data = ' + res.name);
+    console.log('res.name = ' + res.name);
     console.log('res.email = ' + res.email);
 
+    const li = document.createElement('li');
+    li.appendChild(document.createTextNode(`${res.name}: ${res.email}`));
+    userList.appendChild(li);
+
+    //for adding delete button functionality 
+    const delBtn = document.createElement('input');
+    delBtn.setAttribute('type', 'button');
+    delBtn.setAttribute('value', 'Delete');
+    //setting id as an email of user so we can pass the value
+    delBtn.id = res.email;
+    delBtn.setAttribute('onclick', 'deleteUser(this)');
+    li.appendChild(delBtn);
+    delBtn.style.margin = '10px';
+    delBtn.style.marginLeft = '10px';
+    delBtn.style.padding = '5px';
+    delBtn.style.fontSize = '15px';
+    delBtn.style.backgroundColor = '#333';
+    delBtn.style.color = 'white';
+
+    //for adding edit button functionality 
+    const editBtn = document.createElement('input');
+    editBtn.setAttribute('type', 'button');
+    editBtn.setAttribute('value', 'Edit');
+    editBtn.id = res.email;
+    editBtn.setAttribute('onclick', 'editUser(this)');
+    li.appendChild(editBtn);
+    editBtn.style.margin = '10px';
+    editBtn.style.marginLeft = '10px';
+    editBtn.style.padding = '5px';
+    editBtn.style.fontSize = '15px';
+    editBtn.style.backgroundColor = '#333';
+    editBtn.style.color = 'white';
+
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+    axios.get('https://crudcrud.com/api/418f9a4f2374485d941d0149c01475e6/appointmentData')
+        .then(res => {
+            //this will print array collection with data output of get request
+            // console.log(res);
+
+            //res is an object of array 
+            for (let i = 0; i < res.data.length; i++) {
+                showNewUserOnScreen(res.data[i]);
+            }
+        })
+        .catch(err => {
+            console.log(err)
+        });
+})
+
 function onSubmit(e) {
     e.preventDefault();
 
@@ -22,7 +77,7 @@ function onSubmit(e) {
         msg.innerHTML = 'Please enter all fields';
         setTimeout(() => msg.remove(), 3000);
     } else {
-        
+
         const li = document.createElement('li');
         li.appendChild(document.createTextNode(`${nameInput.value}: ${emailInput.value}`));
         userList.appendChild(li);
@@ -41,7 +96,6 @@ function onSubmit(e) {
         delBtn.style.fontSize = '15px';
         delBtn.style.backgroundColor = '#333';
         delBtn.style.color = 'white';
-        // console.log(li.textContent);
 
         //for adding edit button functionality 
         const editBtn = document.createElement('input');
@@ -67,10 +121,9 @@ function onSubmit(e) {
         };
 
         //store the data on the server
-        axios.post('https://crudcrud.com/api/90f4d9b275aa4c23b7b7377a5da5c8d1/appointmentData', obj)
+        axios.post('https://crudcrud.com/api/418f9a4f2374485d941d0149c01475e6/appointmentData', obj)
             .then(res => {
                 console.log(res);
-                showNewUserOnScreen(res.data);
             }).catch(err => console.log(err + ' error'));
 
         nameInput.value = '';
