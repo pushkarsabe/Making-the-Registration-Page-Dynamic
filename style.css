@@ -17,6 +17,8 @@ ul li {
     padding: 5px;
     background: #f4f4f4;
     margin: 5px 0;
+    width: 840px;
+    font-size: 18px;
 }
 
 header {
@@ -27,7 +29,7 @@ header {
 
 .container {
     margin: auto;
-    width: 500px;
+    width: 900px;
     overflow: auto;
     padding: 3rem 2rem;
 }
@@ -81,4 +83,7 @@ header {
     color: #fff;
     padding: 5px;
     margin: 5px;
+}
+#tableOption{
+    padding: 5px;
 }

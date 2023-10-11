@@ -5,31 +5,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Booking Appointment</title>
+  <title>Booking Application</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <header>
-    <h1>Booking Appointment App</h1>
+    <h1>Restaurant Booking Application</h1>
   </header>
 
   <section class="container">
     <form id="my-form">
-      <h1>Add User</h1>
+      <h1 style="padding: 25px;">Add New Order</h1>
       <div class="msg"></div>
       <div>
-        <label for="name">Name:</label>
-        <input type="text" id="name">
+        <label for="price">Price:</label>
+        <input type="text" id="price">
       </div>
       <div>
-        <label for="email">Email:</label>
-        <input type="text" id="email">
+        <label for="chooseDish">Choose dish:</label>
+        <input type="text" id="chooseDish">
       </div>
-      <input class="btn" type="submit" value="Submit">
+      <div>
+        <label for="table">Choose a table:</label>
+        <select id="tableOption">
+          <option value="Table 1">Table 1</option>
+          <option value="Table 2">Table 2</option>
+          <option value="Table 3">Table 3</option>
+        </select>
+      </div>
+      <input class="btn" type="submit" value="Add Bill">
     </form>
-    <ul id="users"></ul>
 
+    <h2>Table 1</h2>
+    <ul id="table1"></ul>
+    <br><br>
+    <h2>Table 2</h2>
+    <ul id="table2"></ul>
+    <br><br>
+    <h2>Table 3</h2>
+    <ul id="table3"></ul>
+    <br><br>
   </section>
 
   <script src="main.js"></script>
