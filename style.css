@@ -18,7 +18,6 @@ ul li {
     background: #f4f4f4;
     margin: 5px 0;
     width: 840px;
-    font-size: 18px;
 }
 
 header {
@@ -83,7 +82,4 @@ header {
     color: #fff;
     padding: 5px;
     margin: 5px;
-}
-#tableOption{
-    padding: 5px;
 }
